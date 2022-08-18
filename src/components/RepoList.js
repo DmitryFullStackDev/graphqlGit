@@ -4,8 +4,8 @@ import { Box } from '../elements'
 
 const RepoList = ({ activeLogin }) => {
   const GET_REPOS = gql`
-    query getListOfRepo {
-      user(login: "dima") {
+    query getListOfRepo($login: String!) {
+      user(login: $login) {
         repositories(first: 5) {
           totalCount
           nodes {
@@ -27,7 +27,9 @@ const RepoList = ({ activeLogin }) => {
     }
   `
 
-  const { data, loading } = useQuery(GET_REPOS, { variables: { activeLogin } })
+  const { data, loading } = useQuery(GET_REPOS, {
+    variables: { login: activeLogin },
+  })
 
   if (loading) {
     return <p>loading</p>
