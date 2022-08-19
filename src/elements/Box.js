@@ -22,10 +22,12 @@ export const Box = styled.div`
   border: ${({ border }) => border};
   border-radius: ${({ borderRadius }) => borderRadius};
   border-bottom: ${({ borderBottom }) => borderBottom};
+  border-top: ${({ borderTop }) => borderTop};
 
   cursor: ${({ cursor }) => cursor};
 
   &:hover {
     background-image: url(${({ img }) => img});
+    background: ${({ backgroundHover }) => backgroundHover};
   }
 `
