@@ -4,10 +4,26 @@ import { Box } from '../elements'
 
 const RepoList = ({ activeLogin }) => {
   const GET_REPOS = gql`
-    query getListOfRepo($login: String!) {
+    query getListOfRepo(
+      $login: String!
+      $after: String
+      $before: String
+      $last: Int
+      $first: Int
+    ) {
       user(login: $login) {
-        repositories(first: 5) {
+        repositories(
+          first: $first
+          last: $last
+          after: $after
+          before: $before
+        ) {
           totalCount
+          pageInfo {
+            endCursor
+            hasNextPage
+            hasPreviousPage
+          }
           nodes {
             name
             owner {
@@ -27,8 +43,28 @@ const RepoList = ({ activeLogin }) => {
     }
   `
 
-  const { data, loading } = useQuery(GET_REPOS, {
-    variables: { login: activeLogin },
+  const updateQuery = (previousResult, { fetchMoreResult }) => {
+    if (!fetchMoreResult) {
+      return previousResult
+    }
+
+    return {
+      ...previousResult,
+      user: {
+        ...previousResult.user,
+        repositories: {
+          ...previousResult.user.repositories,
+          ...fetchMoreResult.user.repositories,
+          nodes: [...fetchMoreResult.user.repositories.nodes],
+        },
+      },
+    }
+  }
+
+  const itemsPerPage = 1
+
+  const { fetchMore, data, loading } = useQuery(GET_REPOS, {
+    variables: { login: activeLogin, first: itemsPerPage },
   })
 
   if (loading) {
@@ -39,13 +75,51 @@ const RepoList = ({ activeLogin }) => {
     return <p>no user</p>
   }
 
+  const totalPages = data.user.repositories.totalCount / itemsPerPage
+
   return (
     <Box>
-      {data.user.repositories.nodes.map(item => (
-        <Box width="300px" height="100">
-          <p>p</p>
+      {data.user.repositories.nodes.map((item, index) => (
+        <Box key={index} width="300px" height="100">
+          <p>{item.name}</p>
         </Box>
       ))}
+
+      {data.user.repositories.pageInfo.hasPreviousPage && (
+        <button
+          onClick={() =>
+            fetchMore({
+              variables: {
+                before: data.user.repositories.pageInfo.endCursor,
+                last: itemsPerPage,
+                first: null,
+              },
+              updateQuery,
+            })
+          }
+        >
+          fetch back
+        </button>
+      )}
+
+      {totalPages}
+
+      {data.user.repositories.pageInfo.hasNextPage && (
+        <button
+          onClick={() =>
+            fetchMore({
+              variables: {
+                after: data.user.repositories.pageInfo.endCursor,
+                first: itemsPerPage,
+                last: null,
+              },
+              updateQuery,
+            })
+          }
+        >
+          fetch more
+        </button>
+      )}
     </Box>
   )
 }
