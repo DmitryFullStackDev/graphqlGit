@@ -3,7 +3,7 @@ import { Box } from './elements/Box'
 import Main from './pages/Main'
 
 const App = () => {
-  const CLIENT_ID = '21e84a86e60faf11f9b7'
+  const CLIENT_ID = process.env.REACT_APP_CLIENT_ID
   const REDIRECT_URI = 'http://localhost:3000/'
   const token = localStorage.getItem('token')
 
