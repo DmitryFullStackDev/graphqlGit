@@ -6,6 +6,7 @@ const Search = ({ value, setValue, dismissFunc }) => {
     <Input
       placeholder="Search users..."
       value={value}
+      borderRight="none"
       onChange={e => {
         setValue(e.target.value)
         dismissFunc()

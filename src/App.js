@@ -31,7 +31,7 @@ const App = () => {
         <Main />
       ) : (
         <a
-          href={`https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&scope=user&redirect_uri=${REDIRECT_URI}`}
+          href={`https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&scope=public_repo&redirect_uri=${REDIRECT_URI}`}
         >
           login
         </a>

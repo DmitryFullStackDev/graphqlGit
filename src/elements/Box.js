@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 
 export const Box = styled.div`
+  position: relative;
   display: ${({ display }) => display || 'flex'};
   flex-direction: ${({ direction }) => direction || 'row'};
   justify-content: ${({ justify }) => justify || 'flex-start'};
