@@ -34,7 +34,7 @@ const UsersList = ({ login = '', activeLogin, setActiveLogin }) => {
   }
 
   if (!data) {
-    return <p>no user</p>
+    return <p>no data</p>
   }
 
   return (
