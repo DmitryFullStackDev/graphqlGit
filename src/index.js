@@ -16,7 +16,6 @@ const httpLink = new HttpLink({ uri: GITHUB_BASE_URL })
 
 const authMiddleware = new ApolloLink((operation, forward) => {
   const token = localStorage.getItem('token')
-  /*'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'*/ /*localStorage.getItem('token')*/
   operation.setContext({
     headers: {
       authorization: token ? 'Bearer ' + token : '',
