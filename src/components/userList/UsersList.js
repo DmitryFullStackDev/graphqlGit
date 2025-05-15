@@ -1,10 +1,10 @@
-import { gql, useQuery } from '@apollo/client'
+import {gql, useQuery} from '@apollo/client'
 import React from 'react'
-import { Box } from '../../elements'
+import {Box} from '@mui/material'
 import User from './elements/User'
 
-const UsersList = ({ login = '', activeLogin, setActiveLogin }) => {
-  const GET_USERS = gql`
+const UsersList = ({login = '', activeLogin, setActiveLogin}) => {
+    const GET_USERS = gql`
     query searchUsers($login: String!) {
       search(query: $login, type: USER, first: 10) {
         nodes {
@@ -27,28 +27,23 @@ const UsersList = ({ login = '', activeLogin, setActiveLogin }) => {
     }
   `
 
-  const { data, loading } = useQuery(GET_USERS, { variables: { login } })
+    const {data, loading} = useQuery(GET_USERS, {variables: {login}})
 
-  if (loading) {
-    return <p>loading</p>
-  }
+    if (loading) return <p>loading</p>
+    if (!data) return <p>no data</p>
 
-  if (!data) {
-    return <p>no data</p>
-  }
-
-  return (
-    <Box margin="20px 0 0 0" overflow="auto" width="100%" padding="20px 0">
-      {data.search.nodes.map(item => (
-        <User
-          activeLogin={activeLogin}
-          setActiveLogin={setActiveLogin}
-          key={item.id}
-          item={item}
-        />
-      ))}
-    </Box>
-  )
+    return (
+        <Box sx={{mt: 3, width: '100%', overflow: 'auto', py: 2, display: 'flex'}}>
+            {data.search.nodes.map(item => (
+                <User
+                    key={item.id}
+                    item={item}
+                    activeLogin={activeLogin}
+                    setActiveLogin={setActiveLogin}
+                />
+            ))}
+        </Box>
+    )
 }
 
 export default UsersList

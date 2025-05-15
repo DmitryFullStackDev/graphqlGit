@@ -1,17 +1,9 @@
-import { gql, useMutation } from '@apollo/client'
-import React, { useState } from 'react'
-import {
-  Box,
-  Button,
-  Input,
-  Mask,
-  OutsiderClicker,
-  Text,
-  Textarea,
-} from '../../../elements'
+import {gql, useMutation} from '@apollo/client'
+import React, {useState} from 'react'
+import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography,} from '@mui/material'
 
-const CreateIssue = ({ setIsOpen, refetch, id }) => {
-  const CREATE_ISSUE = gql`
+const CreateIssue = ({setIsOpen, refetch, id}) => {
+    const CREATE_ISSUE = gql`
     mutation ($repositoryId: ID!, $title: String!, $body: String) {
       createIssue(
         input: { repositoryId: $repositoryId, title: $title, body: $body }
@@ -23,72 +15,74 @@ const CreateIssue = ({ setIsOpen, refetch, id }) => {
     }
   `
 
-  const [createIssueGQL, { data, loading, error }] = useMutation(CREATE_ISSUE)
+    const [createIssueGQL, {loading, error}] = useMutation(CREATE_ISSUE)
 
-  const [textValue, setTextValue] = useState('')
-  const [inputValue, setInputValue] = useState('')
+    const [title, setTitle] = useState('')
+    const [body, setBody] = useState('')
 
-  const closeOptions = () => setIsOpen(false)
+    const handleClose = () => setIsOpen(false)
 
-  return (
-    <Mask justify="center" align="center" dark>
-      <OutsiderClicker width="auto" func={closeOptions}>
-        <Box
-          relative
-          background="white"
-          width="700px"
-          direction="column"
-          padding="15px"
-        >
-          <Text margin="0 0 10px 0" fontSize="24px">
-            Create New Issue
-          </Text>
+    const handleCreate = () => {
+        createIssueGQL({
+            variables: {
+                repositoryId: id,
+                title,
+                body,
+            },
+        })
+            .then(() => {
+                setIsOpen(false)
+                refetch()
+            })
+    }
 
-          <Input
-            value={inputValue}
-            onChange={e => setInputValue(e.target.value)}
-            width="100%"
-            placeholder="Title"
-          />
+    return (
+        <Dialog open onClose={handleClose} maxWidth="sm" fullWidth>
+            <DialogTitle>
+                <Typography variant="h5">Create New Issue</Typography>
+            </DialogTitle>
 
-          <Textarea
-            onChange={e => setTextValue(e.target.value)}
-            value={textValue}
-            placeholder="description"
-            margin="15px 0 25px 0"
-            width="100%"
-          />
+            <DialogContent dividers>
+                <TextField
+                    label="Title"
+                    fullWidth
+                    margin="normal"
+                    value={title}
+                    onChange={e => setTitle(e.target.value)}
+                    disabled={loading}
+                />
+                <TextField
+                    label="Description"
+                    fullWidth
+                    margin="normal"
+                    multiline
+                    minRows={4}
+                    value={body}
+                    onChange={e => setBody(e.target.value)}
+                    disabled={loading}
+                />
+                {error && (
+                    <Typography color="error" variant="body2" mt={2}>
+                        Error creating issue: {error.message}
+                    </Typography>
+                )}
+            </DialogContent>
 
-          <Box margin=" 0 0 0 auto">
-            <Button
-              onClick={() => setIsOpen(false)}
-              backgroundColor="darkred"
-              margin="0 10px 0 0"
-            >
-              Cancel
-            </Button>
-
-            <Button
-              onClick={() => {
-                createIssueGQL({
-                  variables: {
-                    repositoryId: id,
-                    title: inputValue,
-                    body: textValue,
-                  },
-                })
-                  .then(() => setIsOpen(false))
-                  .then(() => refetch())
-              }}
-              backgroundColor="darkgreen"
-            >
-              Create
-            </Button>
-          </Box>
-        </Box>
-      </OutsiderClicker>
-    </Mask>
-  )
+            <DialogActions>
+                <Button onClick={handleClose} color="error" disabled={loading}>
+                    Cancel
+                </Button>
+                <Button
+                    onClick={handleCreate}
+                    color="success"
+                    variant="contained"
+                    disabled={loading || !title.trim()}
+                >
+                    Create
+                </Button>
+            </DialogActions>
+        </Dialog>
+    )
 }
 
 export default CreateIssue
