@@ -1,6 +1,6 @@
 import {gql, useQuery} from '@apollo/client'
 import React, {useState} from 'react'
-import {Box, Button, Typography,} from '@mui/material'
+import {Box, Button, CircularProgress, Typography} from '@mui/material'
 import CreateIssue from './elements/CrateIssue'
 import Issue from './elements/Issue'
 
@@ -37,8 +37,23 @@ const IssueList = ({activeLogin, repoName}) => {
 
     const [isCreateIssue, setIsCreateIssue] = useState(false)
 
+    if (loading) {
+        return (
+            <Box textAlign="center" color="text.secondary">
+                <CircularProgress size={40} thickness={5} sx={{mb: 2}}/>
+                <Typography variant="body1" color="textSecondary">
+                    Loading issues...
+                </Typography>
+            </Box>
+        )
+    }
+
     if (!data) {
-        return <Typography>no data</Typography>
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" height="200px">
+                <Typography>No data available</Typography>
+            </Box>
+        )
     }
 
     return (
@@ -60,10 +75,10 @@ const IssueList = ({activeLogin, repoName}) => {
                         </Typography>
                         <Box
                             sx={{
-                                width: '2px',
-                                height: '2px',
-                                bgcolor: 'grey',
-                                mx: '6px',
+                                width: 6,
+                                height: 6,
+                                bgcolor: 'grey.500',
+                                mx: 1.5,
                                 borderRadius: '50%',
                             }}
                         />
@@ -93,28 +108,29 @@ const IssueList = ({activeLogin, repoName}) => {
                     </Button>
                 </Box>
 
-                {/* Issues */}
-                <Box pt={1} height="180px" display="flex" flexDirection="column">
-                    {loading ? (
-                        <Typography>Loading...</Typography>
-                    ) : (
-                        data.repository.issues.nodes.map((item, index, arr) => (
-                            <Box
-                                key={item.id}
-                                display="flex"
-                                flexDirection="column"
-                                width="100%"
-                                margin="0 0 0 -5px"
-                                padding="20px 5px"
-                                borderTop="1px solid grey"
-                                borderBottom={
-                                    index === arr.length - 1 ? '1px solid grey' : 'none'
-                                }
-                            >
-                                <Issue key={item.id} item={item}/>
-                            </Box>
-                        ))
-                    )}
+                <Box
+                    pt={1}
+                    height="180px"
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent={loading ? 'center' : 'flex-start'}
+                    alignItems="center"
+                    sx={{borderTop: '1px solid grey', borderBottom: '1px solid grey'}}
+                >
+                    {data.repository.issues.nodes.map((item, index, arr) => (
+                        <Box
+                            key={item.id}
+                            display="flex"
+                            flexDirection="column"
+                            width="100%"
+                            margin="0 0 0 -5px"
+                            padding="20px 5px"
+                            borderTop="1px solid grey"
+                            borderBottom={index === arr.length - 1 ? '1px solid grey' : 'none'}
+                        >
+                            <Issue key={item.id} item={item}/>
+                        </Box>
+                    ))}
                 </Box>
             </Box>
 

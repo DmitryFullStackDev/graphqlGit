@@ -1,6 +1,6 @@
 import {gql, useQuery} from '@apollo/client'
 import React, {useEffect, useState} from 'react'
-import {Box, Button, Typography} from '@mui/material'
+import {Box, Button, CircularProgress, Typography} from '@mui/material'
 import Repository from './elements/Repository'
 
 const RepoList = ({activeLogin, setActiveIssues}) => {
@@ -72,8 +72,23 @@ const RepoList = ({activeLogin, setActiveIssues}) => {
         refetch({login: activeLogin, first: itemsPerPage})
     }, [activeLogin])
 
+    if (loading) {
+        return (
+            <Box textAlign="center" color="text.secondary">
+                <CircularProgress size={40} thickness={5} sx={{mb: 2}}/>
+                <Typography variant="body1" color="textSecondary">
+                    Loading repos...
+                </Typography>
+            </Box>
+        )
+    }
+
     if (!data) {
-        return <Typography>Loading...</Typography>
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" height="200px">
+                <Typography>No data available</Typography>
+            </Box>
+        )
     }
 
     const totalPages = Math.ceil(data.user.repositories.totalCount / itemsPerPage)
@@ -96,13 +111,9 @@ const RepoList = ({activeLogin, setActiveIssues}) => {
             </Typography>
 
             <Box sx={{padding: '10px 0 0 0', height: '180px', display: 'flex', flexDirection: 'column'}}>
-                {loading ? (
-                    <Typography>Loading...</Typography>
-                ) : (
-                    data.user.repositories.nodes.map(item => (
-                        <Repository key={item.id} item={item} setActiveIssues={setActiveIssues}/>
-                    ))
-                )}
+                {data.user.repositories.nodes.map(item => (
+                    <Repository key={item.id} item={item} setActiveIssues={setActiveIssues}/>
+                ))}
             </Box>
 
             <Box sx={{alignSelf: 'center', display: 'flex', alignItems: 'center'}}>
@@ -110,7 +121,6 @@ const RepoList = ({activeLogin, setActiveIssues}) => {
                     sx={{height: '30px'}}
                     disabled={!data.user.repositories.pageInfo.hasPreviousPage}
                     onClick={() => {
-                        if (loading) return
                         fetchMore({
                             variables: {
                                 before: null,
@@ -129,7 +139,6 @@ const RepoList = ({activeLogin, setActiveIssues}) => {
                     sx={{height: '30px', margin: '0 5px'}}
                     disabled={!data.user.repositories.pageInfo.hasPreviousPage}
                     onClick={() => {
-                        if (loading) return
                         fetchMore({
                             variables: {
                                 after: null,
@@ -153,7 +162,6 @@ const RepoList = ({activeLogin, setActiveIssues}) => {
                     sx={{height: '30px', margin: '0 5px'}}
                     disabled={!data.user.repositories.pageInfo.hasNextPage}
                     onClick={() => {
-                        if (loading) return
                         fetchMore({
                             variables: {
                                 before: null,
@@ -173,7 +181,6 @@ const RepoList = ({activeLogin, setActiveIssues}) => {
                     sx={{height: '30px'}}
                     disabled={!data.user.repositories.pageInfo.hasNextPage}
                     onClick={() => {
-                        if (loading) return
                         fetchMore({
                             variables: {
                                 last: remain || itemsPerPage,

@@ -1,6 +1,6 @@
 import {gql, useQuery} from '@apollo/client'
 import React from 'react'
-import {Box} from '@mui/material'
+import {Box, CircularProgress, Typography} from '@mui/material'
 import User from './elements/User'
 
 const UsersList = ({login = '', activeLogin, setActiveLogin}) => {
@@ -29,8 +29,24 @@ const UsersList = ({login = '', activeLogin, setActiveLogin}) => {
 
     const {data, loading} = useQuery(GET_USERS, {variables: {login}})
 
-    if (loading) return <p>loading</p>
-    if (!data) return <p>no data</p>
+    if (loading) {
+        return (
+            <Box textAlign="center" color="text.secondary">
+                <CircularProgress size={40} thickness={5} sx={{mb: 2}}/>
+                <Typography variant="body1" color="textSecondary">
+                    Loading users...
+                </Typography>
+            </Box>
+        )
+    }
+
+    if (!data) {
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" height="200px">
+                <Typography>No data available</Typography>
+            </Box>
+        )
+    }
 
     return (
         <Box sx={{mt: 3, width: '100%', overflow: 'auto', py: 2, display: 'flex'}}>
