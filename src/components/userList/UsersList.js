@@ -28,7 +28,7 @@ const UsersList = ({login = '', activeLogin, setActiveLogin}) => {
   `
 
     const {data, loading} = useQuery(GET_USERS, {variables: {login}})
-
+    console.log(data)
     if (loading) {
         return (
             <Box textAlign="center" color="text.secondary">
@@ -50,14 +50,16 @@ const UsersList = ({login = '', activeLogin, setActiveLogin}) => {
 
     return (
         <Box sx={{mt: 3, width: '100%', overflow: 'auto', py: 2, display: 'flex'}}>
-            {data.search.nodes.map(item => (
-                <User
-                    key={item.id}
-                    item={item}
-                    activeLogin={activeLogin}
-                    setActiveLogin={setActiveLogin}
-                />
-            ))}
+            {data.search.nodes
+                .filter(user => user?.repositories)
+                .map(item => (
+                    <User
+                        key={item.id}
+                        item={item}
+                        activeLogin={activeLogin}
+                        setActiveLogin={setActiveLogin}
+                    />
+                ))}
         </Box>
     )
 }
