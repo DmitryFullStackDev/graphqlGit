@@ -1,12 +1,12 @@
 # React github search
 
-A modern web application built with **React** allowing users to interact with github directly in the browser.
+A modern web application built with **React** allowing users to interact with gitHub directly in the browser.
 
 ---
 
 ## 🚀 Features
 
-- 🌐 Github search, issues and repos
+- 🌐 GitHub search, issues and repos
 - 🎨 Mui for styling
 - 📱 Responsive and mobile-friendly design
 
@@ -19,16 +19,20 @@ A modern web application built with **React** allowing users to interact with gi
    ```
 
 ## 🧪 Tech Stack
+
 - React – Frontend framework
-- Graphql - to interact with githab graphql API
+- Graphql - to interact with gitHab graphql API
 - MUI – styling
 
 ## Backend
+
 It is here https://github.com/DmitryFullStackDev/GitOAuth/tree/main
 
 ## ✨ Demo
+
 Experience the app simulation live:
 https://graphql-git.vercel.app/ 🔥
 
 ## 🧩Interface
+
 ![Capture](img.png)
